@@ -1,11 +1,11 @@
 function widget:GetInfo()
 	return {
-		name      = "Show Build V2",
+		name      = "Show Build V3",
 		desc      = "Shows buildings about to be built",
 		author    = "WarXperiment",
 		date      = "February 15, 2010",
 		license   = "GNU GPL, v2 or later",
-        version   = "2",
+        version   = "3",
         layer     = -4,
 		enabled   = true,  --  loaded by default?
 		handler   = true,
@@ -17,6 +17,7 @@ end
 --Changelog
 -- before v2 developed outside of BA by WarXperiment
 -- v2 [teh]decay - fixed crash: Error in DrawWorld(): [string "LuaUI/Widgets/unit_showbuild.lua"]:82: bad argument #1 to 'GetTeamColor' (number expected, got no value)
+-- v3 [teh]decay - updated for spring 98 engine
 
 local command = {}
 local update = {}
@@ -43,7 +44,7 @@ function widget:Initialize()
 end
 
 function widget:GameFrame(frame)
-gameframe = frame
+	gameframe = frame
 
 	for unitID,_ in pairs(update) do
 		if(update[unitID] == frame) then
@@ -52,17 +53,17 @@ gameframe = frame
 				command[key] = nil
 				end
 			end	
-		check(unitID)
+			check(unitID)
 		end	
 	end
 end
 
 function widget:UnitCommand(unitID, unitDefID, unitTeam, cmdID, cmdOpts, cmdParams)
-update[unitID] = gameframe + math.random(1,10)
+	update[unitID] = gameframe + math.random(1,10)
 end
 
 function duplicate(buildData1)
-local dupe = false
+	local dupe = false
 	for key, myCmd in pairs(command) do	
 	local params1 = buildData1.params
 	local params2 = myCmd.params
@@ -71,9 +72,9 @@ local dupe = false
 		end
 	end
 	if(dupe == false) then
-	return false
+		return false
 	else 
-	return true
+		return true
 	end
 end
 
@@ -125,7 +126,7 @@ end
 
 -------------------------------------------------------------
 function check(unitID)
-local queue = Spring.GetCommandQueue(unitID)
+local queue = Spring.GetCommandQueue(unitID, 200) -- depth of 200 commands should be enough
 	if(queue and #queue > 0) then
 		for _, cmd in ipairs(queue) do
 			if ( cmd.id < 0 ) then
@@ -138,3 +139,4 @@ local queue = Spring.GetCommandQueue(unitID)
 		end
 	end	
 end
+
